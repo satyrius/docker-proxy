@@ -1,0 +1,22 @@
+
+map $host $docker_port {
+  default 8080;
+  include maps/*;
+}
+
+server {
+  listen 80 default_server;
+  include ssl/*.conf;
+
+  access_log off;
+  client_max_body_size 0;
+
+  location / {
+    proxy_pass http://172.17.42.1:$docker_port;
+    proxy_send_timeout 10m;
+    proxy_read_timeout 10m;
+    include proxy_params;
+  }
+
+}
+
